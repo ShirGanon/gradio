@@ -326,6 +326,23 @@ describe("Props: buttons", () => {
 		expect(getByLabelText("Fullscreen")).toBeVisible();
 	});
 
+	test("clicking the fullscreen button toggles fullscreen mode", async () => {
+		const { getByLabelText } = await render(ImageSlider, {
+			...preview_props,
+			buttons: ["fullscreen"]
+		});
+
+		// Previously this threw `onclick is not a function` because
+		// SliderPreview did not pass an `onclick` handler to FullscreenButton
+		// (see #13442). After clicking, the button should toggle to its
+		// "Exit fullscreen mode" state.
+		await fireEvent.click(getByLabelText("Fullscreen"));
+
+		await waitFor(() =>
+			expect(getByLabelText("Exit fullscreen mode")).toBeVisible()
+		);
+	});
+
 	test("buttons: [] hides the fullscreen button", async () => {
 		const { queryByLabelText } = await render(ImageSlider, {
 			...preview_props,
